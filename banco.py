@@ -25,14 +25,11 @@ database = df['database'][0]
 username = df['username'][0]
 password = df['password'][0]
 
-print(server, database, username, password)
-
-cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
-cursor = cnxn.cursor()
-df = pd.DataFrame()
-df_sql = pd.DataFrame()
-
 def consulta_clientes():
+    cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
+    cursor = cnxn.cursor()
+    df_sql = pd.DataFrame()
+
     consulta = f"""SELECT
                     T1.NR_CPFCNPJ AS 'CNPJ do Contribuinte', 
                     REPLACE(REPLACE(T1.NR_IE, '.', ''), '-', '') AS 'Inscricao Estadual',
