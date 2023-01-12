@@ -7,7 +7,7 @@ from datetime import datetime
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
-chave = 'asjkfa&_jsa&%jasfka*'
+chave = 'canetaazul'
 
 def descriptografar(mensagem, chave):
     MensagemDescriptografada = cryptocode.decrypt(mensagem, chave)
