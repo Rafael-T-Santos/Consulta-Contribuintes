@@ -4,7 +4,7 @@ import flet
 from flet import (  Page, ElevatedButton, Text, TextField,
                     AlertDialog, TextButton, MainAxisAlignment)
 
-chave = 'asjkfa&_jsa&%jasfka*'
+chave = 'asjkfa902317fçkas-07mmbacy1782190sadjlasfka*'
 
 def criptografar(mensagem, chave):
     MensagemCriptografada = cryptocode.encrypt(mensagem, chave)
