@@ -1,0 +1,12 @@
+Sefaz retornou mensagem de erro em - 2022-10-25 07:39:52.716058
+Sefaz retornou mensagem de erro em - 2022-12-20 07:15:04.089851
+Processo concluido com sucesso em - 2022-12-20 10:28:44.009369
+Processo concluido com sucesso em - 2022-12-23 07:08:46.301077
+Processo concluido com sucesso em - 2022-12-27 07:13:05.699560
+Processo concluido com sucesso em - 2022-12-28 08:51:59.702688
+Processo concluido com sucesso em - 2023-01-07 09:01:26.013124
+Processo concluido com sucesso em - 2023-01-09 07:13:09.133659
+Processo concluido com sucesso em - 2023-01-10 07:25:09.728452
+Sefaz retornou mensagem de erro em - 2023-01-11 09:15:24.786371
+Processo concluido com sucesso em - 2023-01-11 15:24:16.197846
+Processo concluido com sucesso em - 2023-01-12 07:24:24.898090

@@ -14,6 +14,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
+import banco as b
+
 hoje = datetime.today().strftime('%Y-%m-%d')
 ontem = (datetime.today() - timedelta(1)).strftime('%Y-%m-%d')
 
@@ -22,7 +24,7 @@ sexto_arquivo = (datetime.today() - timedelta(5)).strftime('%Y-%m-%d')
 service = Service(executable_path=ChromeDriverManager().install())
 
 download_temp = tempfile.mkdtemp()
-destino = r"E:\Destino 2"
+destino = "Destino"
 prefs = {
 'download.default_directory': download_temp,
 'download.prompt_for_download': False,
@@ -46,11 +48,14 @@ def download_planilha():
     print('Acessando site.')
 
     select = Select(driver.find_element(By.NAME, 'CmdUF'))
-    select.select_by_value('AL')
+    #uf = input('Digite a sigla da UF que deseja efetuar o download.')
+    #uf = uf.upper()
+    uf = 'AL'
+    select.select_by_value(uf)
 
     filtro = driver.find_element(By.NAME, 'AplicarFiltro')
     filtro.click()
-    print('Selecionada UF = AL, aguardando conclusão do filtro.')
+    print(f'Selecionada UF = {uf}, aguardando conclusão do filtro.')
     time.sleep(30)
 
     #total = driver.find_element(By.ID, 'lblTotal')
@@ -99,21 +104,27 @@ def download_planilha():
 
     print('Movendo os arquivos e excluindo arquivos antigos.')
     for file in files:
-        shutil.move(f"{download_temp}\\{file}", f"{destino}\\{hoje}-{file}")
+        shutil.move(f"{download_temp}\\{file}", f"{destino}\\Downloads\\{hoje}-{file}")
 
-    for file in os.listdir(destino):
+    for file in os.listdir("Destino\\Downloads"):
         if sexto_arquivo in file:
-            os.remove(f"{destino}\\{file}")
+            os.remove(f"{destino}\\Downloads\\{file}")
         else:
             pass
-      
-    print(f'Download efetuado com sucesso, os arquivos foram movidos para a pasta - {destino}')
 
-    for file in os.listdir(destino):
+    print(f'Download efetuado com sucesso, os arquivos foram movidos para a pasta - {destino}\Downloads')
+
+    for file in os.listdir("Destino\\Downloads"):
         if ontem in file and 'rpt' in file:
-            df1 = pd.read_csv(f'{destino}\\{file}', sep = ';')
+            try:
+                df1 = pd.read_csv(f'{destino}\\Downloads\\{file}', sep = ';')
+            except:
+                print('Não existe arquivo de ontem para comparar, volte amanhã.')
         elif hoje in file and 'rpt' in file:
-            df2 = pd.read_csv(f'{destino}\\{file}', sep = ';')
+            try:
+                df2 = pd.read_csv(f'{destino}\\Downloads\\{file}', sep = ';')
+            except:
+                print('Não existe arquivo de hoje, ocorreu algum problema ao salvar o arquivo.')
         else:
             pass
     
@@ -121,9 +132,19 @@ def download_planilha():
 
     df3 = df1.merge(df2, indicator=True, how = 'outer').loc[lambda v: v['_merge'] == 'right_only']
     df3.drop(columns=['Unnamed: 5', '_merge'], inplace = True)
-    df3.to_csv(f"{destino}\\Alterações-{hoje}.csv", sep = ';', index = False)
+    df3.to_csv(f"{destino}\\Alteracoes\\Alterações-{hoje}.csv", sep = ';', index = False)
+    df3 = df3.astype(str)
+    df4 = b.consulta_clientes()
 
-    print(f'Criado novo arquivo apenas com as empresas que sofreram alteração.\nO arquivo foi salvo em - {destino}\\Alterações-{hoje}')
+    df5 = df4.merge(df3, indicator=True, how = 'inner', on = ['CNPJ do Contribuinte', 'Inscricao Estadual'])
+    df5.drop(columns=['Razao Social_y','UF_y', '_merge'], inplace = True)
+    df5.rename(columns={'Razao Social_x': 'Razao Social',
+                        'UF_x': 'UF',
+                        'Situacao_x': 'Situacao Cadastro',
+                        'Situacao_y': 'Situacao SEFAZ'}, inplace = True)
+    df5.to_csv(f"{destino}\\Clientes\\{hoje}.csv", sep = ';', index = False)
+
+    print(f'Criado novo arquivo apenas com as empresas que sofreram alteração.\nO arquivo foi salvo em - {destino}\\Clientes\\{hoje}')
     arquivo = open(f"{destino}\\log.txt", "a")
     arquivo.write(f"Processo concluido com sucesso em - {datetime.today()}\n")
     
