@@ -119,34 +119,43 @@ def download_planilha():
             try:
                 df1 = pd.read_csv(f'{destino}\\Downloads\\{file}', sep = ';')
             except:
-                print('Não existe arquivo de ontem para comparar, volte amanhã.')
+                arquivo = open(f"{destino}\\log.txt", "a")
+                arquivo.write(f"Não existe arquivo de ontem para comparar, volte amanhã. - {datetime.today()}\n")
         elif hoje in file and 'rpt' in file:
             try:
                 df2 = pd.read_csv(f'{destino}\\Downloads\\{file}', sep = ';')
             except:
-                print('Não existe arquivo de hoje, ocorreu algum problema ao salvar o arquivo.')
+                arquivo = open(f"{destino}\\log.txt", "a")
+                arquivo.write(f"Ocorreu algum problema, contate o suporte. - {datetime.today()}\n")
         else:
             pass
     
     print('Criando Dataframes e comparando arquivos de ontem e hoje.')
 
-    df3 = df1.merge(df2, indicator=True, how = 'outer').loc[lambda v: v['_merge'] == 'right_only']
-    df3.drop(columns=['Unnamed: 5', '_merge'], inplace = True)
-    df3.to_csv(f"{destino}\\Alteracoes\\Alterações-{hoje}.csv", sep = ';', index = False)
-    df3 = df3.astype(str)
-    df4 = b.consulta_clientes()
+    try:
+        df3 = df1.merge(df2, indicator=True, how = 'outer').loc[lambda v: v['_merge'] == 'right_only']
+        df3.drop(columns=['Unnamed: 5', '_merge'], inplace = True)
+        df3.to_csv(f"{destino}\\Alteracoes\\Alterações-{hoje}.csv", sep = ';', index = False)
+        df3 = df3.astype(str)
+    except:
+        pass
 
-    df5 = df4.merge(df3, indicator=True, how = 'inner', on = ['CNPJ do Contribuinte', 'Inscricao Estadual'])
-    df5.drop(columns=['Razao Social_y','UF_y', '_merge'], inplace = True)
-    df5.rename(columns={'Razao Social_x': 'Razao Social',
-                        'UF_x': 'UF',
-                        'Situacao_x': 'Situacao Cadastro',
-                        'Situacao_y': 'Situacao SEFAZ'}, inplace = True)
-    df5.to_csv(f"{destino}\\Clientes\\{hoje}.csv", sep = ';', index = False)
+    try:
+        df4 = b.consulta_clientes()
 
-    print(f'Criado novo arquivo apenas com as empresas que sofreram alteração.\nO arquivo foi salvo em - {destino}\\Clientes\\{hoje}')
-    arquivo = open(f"{destino}\\log.txt", "a")
-    arquivo.write(f"Processo concluido com sucesso em - {datetime.today()}\n")
+        df5 = df4.merge(df3, indicator=True, how = 'inner', on = ['CNPJ do Contribuinte', 'Inscricao Estadual'])
+        df5.drop(columns=['Razao Social_y','UF_y', '_merge'], inplace = True)
+        df5.rename(columns={'Razao Social_x': 'Razao Social',
+                            'UF_x': 'UF',
+                            'Situacao_x': 'Situacao Cadastro',
+                            'Situacao_y': 'Situacao SEFAZ'}, inplace = True)
+        df5.to_csv(f"{destino}\\Clientes\\{hoje}.csv", sep = ';', index = False)
+
+        print(f'Criado novo arquivo apenas com as empresas que sofreram alteração.\nO arquivo foi salvo em - {destino}\\Clientes\\{hoje}')
+        arquivo = open(f"{destino}\\log.txt", "a")
+        arquivo.write(f"Processo concluido com sucesso em - {datetime.today()}\n")
+    except:
+        pass
     
     driver.quit()
 
