@@ -141,7 +141,7 @@ def download_planilha():
         pass
 
     try:
-        df4 = b.consulta_clientes()
+        df4 = b.consulta_clientes_questor()
 
         df5 = df4.merge(df3, indicator=True, how = 'inner', on = ['CNPJ do Contribuinte', 'Inscricao Estadual'])
         df5.drop(columns=['Razao Social_y','UF_y', '_merge'], inplace = True)

@@ -25,7 +25,7 @@ database = df['database'][0]
 username = df['username'][0]
 password = df['password'][0]
 
-def consulta_clientes():
+def consulta_clientes_questor():
     cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
     cursor = cnxn.cursor()
     df_sql = pd.DataFrame()
@@ -39,6 +39,19 @@ def consulta_clientes():
                         FROM TBL_ENTIDADES T1
                             INNER JOIN TBL_ENDERECO_CIDADES T2
                                 ON T1.CD_CIDADE = T2.CD_CIDADE
-                                WHERE T1.X_CLIENTE = 1;"""
+                                WHERE T1.X_CLIENTE = 1;
+                """
     df_sql = pd.read_sql_query(consulta, cnxn)
     return df_sql
+
+def consulta_clientes_winthor():
+    
+
+    consulta = f"""SELECT 
+                    CGCENT AS "CNPJ do Contribuinte",
+                    IEENT AS "Inscricao Estadual",
+                    CLIENTE AS "Razao Social",
+                    ESTENT AS "UF"
+                        FROM PCCLIENT
+                            WHERE ESTENT = 'AL';                    
+                """
