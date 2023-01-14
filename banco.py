@@ -25,6 +25,21 @@ database = df['database'][0]
 username = df['username'][0]
 password = df['password'][0]
 
+def testar_conexao(df2):
+    print(df2)
+    if df2['sistema'][0] == 'Questor':
+        try:
+            pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
+            return True
+        except:
+            return False
+    elif df2['sistema'][0] == 'Winthor':
+        print('Winthor')
+        return False
+    else:
+        print('Ocorreu algum erro!')
+        return False
+    
 def consulta_clientes_questor():
     cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
     cursor = cnxn.cursor()
@@ -55,3 +70,7 @@ def consulta_clientes_winthor():
                         FROM PCCLIENT
                             WHERE ESTENT = 'AL';                    
                 """
+
+"""df2 = df
+df2['sistema'] = 'Questor'
+print(testar_conexao(df2))"""

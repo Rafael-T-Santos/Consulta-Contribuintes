@@ -3,7 +3,9 @@ import pandas as pd
 import flet
 from flet import (  Page, ElevatedButton, Text, TextField,
                     AlertDialog, TextButton, MainAxisAlignment,
-                    Dropdown, dropdown)
+                    Dropdown, dropdown, Row)
+
+import banco as b
 
 chave = 'canetaazul'
 
@@ -29,11 +31,36 @@ def main(page: Page):
 
     global txt_server, txt_database, txt_username, txt_password
 
+    def testar_conexao(e):
+        if txt_server.value == '' or txt_database.value == '' or txt_username.value == '' or txt_password.value == '' or drop_sistema.value == None:
+            page.dialog = erro_modal
+            erro_modal.open = True
+            page.update()
+        else:
+            df = {'server': [txt_server.value],
+                'database': [txt_database.value],
+                'username': [txt_username.value],
+                'password': [txt_password.value],
+                'sistema': [drop_sistema.value]
+            }
+            print(df)
+            conexao = b.testar_conexao(df)
+            if conexao:
+                page.dialog = teste_modal
+                teste_modal.open = True
+                page.update()
+            else:
+                page.dialog = teste_modal_erro
+                teste_modal_erro.open = True
+                page.update()
+        conexao = False
+
     def cripto_arquivo(e):
         df = {'server': [txt_server.value],
             'database': [txt_database.value],
             'username': [txt_username.value],
-            'password': [txt_password.value]
+            'password': [txt_password.value],
+            'sistema': [drop_sistema.value]
         }
 
         df = pd.DataFrame(data=df)
@@ -42,6 +69,7 @@ def main(page: Page):
         df['database'][0] = criptografar(df['database'][0], chave)
         df['username'][0] = criptografar(df['username'][0], chave)
         df['password'][0] = criptografar(df['password'][0], chave)
+        df['sistema'][0] = criptografar(df['sistema'][0], chave)
 
         df.to_csv('_config\config.csv', index=False, sep=';')
         close_dlg(e)
@@ -53,6 +81,7 @@ def main(page: Page):
         df['database'][0] = descriptografar(df['database'][0], chave)
         df['username'][0] = descriptografar(df['username'][0], chave)
         df['password'][0] = descriptografar(df['password'][0], chave)
+        df['sistema'][0] = criptografar(df['sistema'][0], chave)
 
         df.to_csv('_config\config.csv', index=False, sep=';')
         close_dlg(e)
@@ -85,7 +114,14 @@ def main(page: Page):
     def close_erro(e):
         erro_modal.open = False
         page.update()
+
+    def close_teste(e):
+        teste_modal.open = False
+        page.update()
     
+    def close_teste_erro(e):
+        teste_modal_erro.open = False
+        page.update()
 
     txt_server = TextField(label="servidor,porta", hint_text='Insira o IP e porta do servidor', width=390, helper_text='Exemplo: 192.168.0.1,8888', prefix_icon="computer")
     txt_database = TextField(label="database", hint_text='Insira o nome do banco', width=390, prefix_icon="account_tree_outlined")
@@ -93,6 +129,7 @@ def main(page: Page):
     txt_password = TextField(label="password", hint_text='Insira a senha do usuário', width=390, prefix_icon="password", password=True, can_reveal_password=True)
     btn_criar = ElevatedButton('Criar Arquivo', on_click=open_dlg_modal, width=200, icon="check")
     btn_decr = ElevatedButton('Descriptografar', on_click=descripto_arquivo, width=200, visible=False, icon="videogame_asset")
+    btn_testar = ElevatedButton('Testar Conexão', on_click=testar_conexao, width=200, icon="connected_tv")
     drop_sistema = Dropdown(label='Sistema',
                             hint_text='Escolha o sistema.',
                             options=[
@@ -131,7 +168,27 @@ def main(page: Page):
         actions_alignment=MainAxisAlignment.CENTER
     )
 
-    page.add(txt_server,txt_database,txt_username,txt_password,drop_sistema, btn_criar, btn_decr)
+    teste_modal = AlertDialog(
+        modal=True,
+        title=Text("Teste de Conexão"),
+        content=Text("Conexão bem sucedida!"),
+        actions=[
+            TextButton("OK", on_click=close_teste)
+        ],
+        actions_alignment=MainAxisAlignment.CENTER
+    )
+
+    teste_modal_erro = AlertDialog(
+        modal=True,
+        title=Text("Teste de Conexão"),
+        content=Text("Impossível conectar, verifique todos os campos digitados e tente novamente."),
+        actions=[
+            TextButton("OK", on_click=close_teste_erro)
+        ],
+        actions_alignment=MainAxisAlignment.CENTER
+    )
+
+    page.add(txt_server,txt_database,txt_username,txt_password,drop_sistema, Row([btn_criar,btn_testar]), btn_decr)
 
 
 flet.app(name='Criar arquivo de conexão', target=main)
