@@ -32,6 +32,7 @@ def main(page: Page):
     global txt_server, txt_database, txt_username, txt_password
 
     def testar_conexao(e):
+        conexao = False
         if txt_server.value == '' or txt_database.value == '' or txt_username.value == '' or txt_password.value == '' or drop_sistema.value == None:
             page.dialog = erro_modal
             erro_modal.open = True
@@ -53,7 +54,6 @@ def main(page: Page):
                 page.dialog = teste_modal_erro
                 teste_modal_erro.open = True
                 page.update()
-        conexao = False
 
     def cripto_arquivo(e):
         df = {'server': [txt_server.value],
