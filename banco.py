@@ -3,6 +3,7 @@ import csv
 import pandas as pd
 import pyodbc
 import warnings
+import cx_Oracle
 from datetime import datetime
 
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -26,24 +27,31 @@ username = df['username'][0]
 password = df['password'][0]
 
 def testar_conexao(df2):
-    print(df2)
+    server2 = df2['server'][0]
+    database2 = df2['database'][0]
+    username2 = df2['username'][0]
+    password2 = df2['password'][0]
+
     if df2['sistema'][0] == 'Questor':
         try:
-            pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
+            pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server2+';DATABASE='+database2+';UID='+username2+';PWD='+password2)
             return True
         except:
             return False
     elif df2['sistema'][0] == 'Winthor':
-        print('Winthor')
-        return False
+        try:
+            cx_Oracle.connect(user=username2, password=password2,dsn=f"{server2}/{database2}")
+            print('winthor true')
+            return True
+        except:
+            print('winthor false')
+            return False
     else:
         print('Ocorreu algum erro!')
         return False
     
 def consulta_clientes_questor():
     cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
-    cursor = cnxn.cursor()
-    df_sql = pd.DataFrame()
 
     consulta = f"""SELECT
                     T1.NR_CPFCNPJ AS 'CNPJ do Contribuinte', 
@@ -60,7 +68,8 @@ def consulta_clientes_questor():
     return df_sql
 
 def consulta_clientes_winthor():
-    
+    connection = cx_Oracle.connect(user=username, password=password,
+                               dsn=f"{server}/{database}")
 
     consulta = f"""SELECT 
                     CGCENT AS "CNPJ do Contribuinte",
@@ -70,6 +79,9 @@ def consulta_clientes_winthor():
                         FROM PCCLIENT
                             WHERE ESTENT = 'AL';                    
                 """
+
+    df_oracle = pd.read_sql_query(consulta, connection)
+    return df_oracle
 
 """df2 = df
 df2['sistema'] = 'Questor'
