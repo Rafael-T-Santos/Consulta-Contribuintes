@@ -40,11 +40,13 @@ def testar_conexao(df2):
             return False
     elif df2['sistema'][0] == 'Winthor':
         try:
+            if "," in server2:
+                server2 = server2.replace(',', ':')
+            else:
+                pass
             cx_Oracle.connect(user=username2, password=password2,dsn=f"{server2}/{database2}")
-            print('winthor true')
             return True
         except:
-            print('winthor false')
             return False
     else:
         print('Ocorreu algum erro!')
