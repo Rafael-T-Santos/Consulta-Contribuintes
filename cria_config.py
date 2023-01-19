@@ -80,7 +80,7 @@ def main(page: Page):
         df['database'][0] = descriptografar(df['database'][0], chave)
         df['username'][0] = descriptografar(df['username'][0], chave)
         df['password'][0] = descriptografar(df['password'][0], chave)
-        df['sistema'][0] = criptografar(df['sistema'][0], chave)
+        df['sistema'][0] = descriptografar(df['sistema'][0], chave)
 
         df.to_csv('_config\config.csv', index=False, sep=';')
         close_dlg(e)
@@ -127,7 +127,7 @@ def main(page: Page):
     txt_username = TextField(label="username", hint_text='Insira o usuário do banco', width=390, prefix_icon="account_box_outlined")
     txt_password = TextField(label="password", hint_text='Insira a senha do usuário', width=390, prefix_icon="password", password=True, can_reveal_password=True)
     btn_criar = ElevatedButton('Criar Arquivo', on_click=open_dlg_modal, width=190, icon="check")
-    btn_decr = ElevatedButton('Descriptografar', on_click=descripto_arquivo, width=150, visible=False, icon="videogame_asset")
+    btn_decr = ElevatedButton('Descriptografar', on_click=descripto_arquivo, width=190, visible=False, icon="videogame_asset")
     btn_testar = ElevatedButton('Testar Conexão', on_click=testar_conexao, width=190, icon="connected_tv")
     drop_sistema = Dropdown(label='Sistema',
                             hint_text='Escolha o sistema.',
