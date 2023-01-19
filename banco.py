@@ -77,14 +77,11 @@ def consulta_clientes_winthor():
                     CGCENT AS "CNPJ do Contribuinte",
                     IEENT AS "Inscricao Estadual",
                     CLIENTE AS "Razao Social",
-                    ESTENT AS "UF"
+                    ESTENT AS "UF",
+                    CASE WHEN BLOQUEIO = 'N' THEN 'Ativo' ELSE 'Inativo' END AS "Situacao"
                         FROM PCCLIENT
-                            WHERE ESTENT = 'AL';                    
+                            WHERE ESTENT = 'AL'                 
                 """
 
     df_oracle = pd.read_sql_query(consulta, connection)
     return df_oracle
-
-"""df2 = df
-df2['sistema'] = 'Questor'
-print(testar_conexao(df2))"""

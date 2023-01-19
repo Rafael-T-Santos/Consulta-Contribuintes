@@ -15,6 +15,17 @@ from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
 import banco as b
+import cryptocode
+
+chave = 'canetaazul'
+
+def descriptografar(mensagem, chave):
+    MensagemDescriptografada = cryptocode.decrypt(mensagem, chave)
+    return(MensagemDescriptografada)
+
+df = pd.read_csv('_config\config.csv', delimiter=';')
+
+sistema = descriptografar(df['sistema'][0], chave)
 
 hoje = datetime.today().strftime('%Y-%m-%d')
 ontem = (datetime.today() - timedelta(1)).strftime('%Y-%m-%d')
@@ -37,7 +48,7 @@ options.add_experimental_option('excludeSwitches', ['enable-logging'])
 options.add_argument('--headless')
 
 driver = webdriver.Chrome(service = service, options = options)
-driver.implicitly_wait(1)
+driver.implicitly_wait(5)
 
 def download_planilha():
     exit = 0
@@ -141,7 +152,10 @@ def download_planilha():
         pass
 
     try:
-        df4 = b.consulta_clientes_questor()
+        if sistema == 'Questor':
+            df4 = b.consulta_clientes_questor()
+        elif sistema == 'Winthor':
+            df4 = b.consulta_clientes_winthor()
 
         df5 = df4.merge(df3, indicator=True, how = 'inner', on = ['CNPJ do Contribuinte', 'Inscricao Estadual'])
         df5.drop(columns=['Razao Social_y','UF_y', '_merge'], inplace = True)
@@ -149,13 +163,14 @@ def download_planilha():
                             'UF_x': 'UF',
                             'Situacao_x': 'Situacao Cadastro',
                             'Situacao_y': 'Situacao SEFAZ'}, inplace = True)
-        df5.to_csv(f"{destino}\\Clientes\\{hoje}.csv", sep = ';', index = False)
+        df5.to_csv(f"{destino}\\Clientes\\{sistema}-{hoje}.csv", sep = ';', index = False)
 
-        print(f'Criado novo arquivo apenas com as empresas que sofreram alteração.\nO arquivo foi salvo em - {destino}\\Clientes\\{hoje}')
+        print(f'Criado novo arquivo apenas com as empresas que sofreram alteração.\nO arquivo foi salvo em - {destino}\\Clientes\\{sistema}-{hoje}')
         arquivo = open(f"{destino}\\log.txt", "a")
         arquivo.write(f"Processo concluido com sucesso em - {datetime.today()}\n")
     except:
-        pass
+        arquivo = open(f"{destino}\\log.txt", "a")
+        arquivo.write(f"Ocorreu algum problema de conexão com o banco de dados, contate o suporte. - {datetime.today()}\n")
     
     driver.quit()
 

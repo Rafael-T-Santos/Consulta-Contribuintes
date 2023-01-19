@@ -44,7 +44,6 @@ def main(page: Page):
                 'password': [txt_password.value],
                 'sistema': [drop_sistema.value]
             }
-            print(df)
             conexao = b.testar_conexao(df)
             if conexao:
                 page.dialog = teste_modal
@@ -123,13 +122,13 @@ def main(page: Page):
         teste_modal_erro.open = False
         page.update()
 
-    txt_server = TextField(label="servidor,porta", hint_text='Insira o IP e porta do servidor', width=390, helper_text='Exemplo: 192.168.0.1,8888', prefix_icon="computer")
+    txt_server = TextField(label="servidor,porta", hint_text='Insira o IP e porta do servidor', width=390, helper_text='Exemplo: 192.168.0.1,8888 ou 192.168.0.1', prefix_icon="computer")
     txt_database = TextField(label="database", hint_text='Insira o nome do banco', width=390, prefix_icon="account_tree_outlined")
     txt_username = TextField(label="username", hint_text='Insira o usuário do banco', width=390, prefix_icon="account_box_outlined")
     txt_password = TextField(label="password", hint_text='Insira a senha do usuário', width=390, prefix_icon="password", password=True, can_reveal_password=True)
-    btn_criar = ElevatedButton('Criar Arquivo', on_click=open_dlg_modal, width=200, icon="check")
-    btn_decr = ElevatedButton('Descriptografar', on_click=descripto_arquivo, width=200, visible=False, icon="videogame_asset")
-    btn_testar = ElevatedButton('Testar Conexão', on_click=testar_conexao, width=200, icon="connected_tv")
+    btn_criar = ElevatedButton('Criar Arquivo', on_click=open_dlg_modal, width=190, icon="check")
+    btn_decr = ElevatedButton('Descriptografar', on_click=descripto_arquivo, width=150, visible=False, icon="videogame_asset")
+    btn_testar = ElevatedButton('Testar Conexão', on_click=testar_conexao, width=190, icon="connected_tv")
     drop_sistema = Dropdown(label='Sistema',
                             hint_text='Escolha o sistema.',
                             options=[
@@ -188,7 +187,7 @@ def main(page: Page):
         actions_alignment=MainAxisAlignment.CENTER
     )
 
-    page.add(txt_server,txt_database,txt_username,txt_password,drop_sistema, Row([btn_criar,btn_testar]), btn_decr)
+    page.add(txt_server,txt_database,txt_username,txt_password,drop_sistema, Row([btn_criar,btn_testar], alignment='center'), btn_decr)
 
 
 flet.app(name='Criar arquivo de conexão', target=main)
