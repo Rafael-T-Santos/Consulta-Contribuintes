@@ -10,3 +10,5 @@ A conexão com o banco de dados se da através do arquivo banco.py, o mesmo util
 Havendo essa necessidade foi criado o programa cria_config.py onde o mesmo solicita essas informações e cria um arquivo criptografado a partir da chave disponibilizada no inicio do código, essa mesma chave deve ser utilizada no arquivo banco.py para descriptografar as informações, vide interface da aplicação.
 
 [![Cria Config](imgs/Interface1.jpg "Cria Config")](https://github.com/Rafael-T-Santos/Consulta-Contribuintes/blob/main/cria_config.py)
+
+[Video](https://youtu.be/oGeQqE0XEdw)

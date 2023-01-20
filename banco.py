@@ -14,17 +14,20 @@ def descriptografar(mensagem, chave):
     MensagemDescriptografada = cryptocode.decrypt(mensagem, chave)
     return(MensagemDescriptografada)
 
-df = pd.read_csv('_config\config.csv', delimiter=';')
+def abrir_config():
+    df = pd.read_csv('_config\config.csv', delimiter=';')
 
-df['server'][0] = descriptografar(df['server'][0], chave)
-df['database'][0] = descriptografar(df['database'][0], chave)
-df['username'][0] = descriptografar(df['username'][0], chave)
-df['password'][0] = descriptografar(df['password'][0], chave)
+    df['server'][0] = descriptografar(df['server'][0], chave)
+    df['database'][0] = descriptografar(df['database'][0], chave)
+    df['username'][0] = descriptografar(df['username'][0], chave)
+    df['password'][0] = descriptografar(df['password'][0], chave)
 
-server = df['server'][0]
-database = df['database'][0]
-username = df['username'][0]
-password = df['password'][0]
+    server = df['server'][0]
+    database = df['database'][0]
+    username = df['username'][0]
+    password = df['password'][0]
+    
+    return server, database, username, password
 
 def testar_conexao(df2):
     server2 = df2['server'][0]
@@ -53,6 +56,7 @@ def testar_conexao(df2):
         return False
     
 def consulta_clientes_questor():
+    server, database, username, password =  abrir_config()
     cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
 
     consulta = f"""SELECT
@@ -70,6 +74,7 @@ def consulta_clientes_questor():
     return df_sql
 
 def consulta_clientes_winthor():
+    server, database, username, password =  abrir_config()
     connection = cx_Oracle.connect(user=username, password=password,
                                dsn=f"{server}/{database}")
 
