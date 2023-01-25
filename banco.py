@@ -60,6 +60,7 @@ def consulta_clientes_questor():
     cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
 
     consulta = f"""SELECT
+                    T1.CD_ENTIDADE AS COD,
                     T1.NR_CPFCNPJ AS 'CNPJ do Contribuinte', 
                     REPLACE(REPLACE(T1.NR_IE, '.', ''), '-', '') AS 'Inscricao Estadual',
                     T1.DS_ENTIDADE AS 'Razao Social',
@@ -78,7 +79,8 @@ def consulta_clientes_winthor():
     connection = cx_Oracle.connect(user=username, password=password,
                                dsn=f"{server}/{database}")
 
-    consulta = f"""SELECT 
+    consulta = f"""SELECT
+                    CODCLI AS "COD", 
                     CGCENT AS "CNPJ do Contribuinte",
                     IEENT AS "Inscricao Estadual",
                     CLIENTE AS "Razao Social",

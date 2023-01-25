@@ -7,6 +7,9 @@ from flet import (  Page, ElevatedButton, Text, TextField,
 
 import banco as b
 
+#Caminho para o instantcliente oracle, caso a conexão seja para outro servidor se não o localhost
+#cx_Oracle.init_oracle_client(lib_dir=r"essenciais\WINTHOR\instantclient_21_8")
+
 chave = 'canetaazul'
 
 def criptografar(mensagem, chave):
