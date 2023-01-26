@@ -114,8 +114,13 @@ def download_planilha():
     files = os.listdir(download_temp)
 
     print('Movendo os arquivos e excluindo arquivos antigos.')
-    for file in files:
-        shutil.move(f"{download_temp}\\{file}", f"{destino}\\Downloads\\{hoje}-{file}")
+    try:
+        for file in files:
+            shutil.move(f"{download_temp}\\{file}", f"{destino}\\Downloads\\{hoje}-{file}")
+    except:
+        time.sleep(30)
+        for file in files:
+            shutil.move(f"{download_temp}\\{file}", f"{destino}\\Downloads\\{hoje}-{file}")
 
     for file in os.listdir("Destino\\Downloads"):
         if sexto_arquivo in file:
