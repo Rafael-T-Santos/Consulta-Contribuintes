@@ -3,7 +3,8 @@ import pandas as pd
 import flet
 from flet import (  Page, ElevatedButton, Text, TextField,
                     AlertDialog, TextButton, MainAxisAlignment,
-                    Dropdown, dropdown, Row)
+                    Dropdown, dropdown, Row, Container, ProgressRing,
+                    alignment, colors, Column, Stack)
 
 import banco as b
 
@@ -47,12 +48,16 @@ def main(page: Page):
                 'password': [txt_password.value],
                 'sistema': [drop_sistema.value]
             }
+            progresso.visible = True
+            page.update()
             conexao = b.testar_conexao(df)
             if conexao:
+                progresso.visible = False
                 page.dialog = teste_modal
                 teste_modal.open = True
                 page.update()
             else:
+                progresso.visible = False
                 page.dialog = teste_modal_erro
                 teste_modal_erro.open = True
                 page.update()
@@ -139,6 +144,8 @@ def main(page: Page):
                                 dropdown.Option('Winthor')
                             ], width=390)
 
+
+
     dlg_modal = AlertDialog(
         modal=True,
         title=Text("Confirmar"),
@@ -190,7 +197,15 @@ def main(page: Page):
         actions_alignment=MainAxisAlignment.CENTER
     )
 
-    page.add(txt_server,txt_database,txt_username,txt_password,drop_sistema, Row([btn_criar,btn_testar], alignment='center'), btn_decr)
+    progresso = Container(
+                    content=ProgressRing(),
+                    alignment=alignment.center, visible=False, opacity=0.3, bgcolor=colors.WHITE)
 
+    geral = Container(content=Column(controls=[txt_server,txt_database,txt_username,txt_password,drop_sistema, Row([btn_criar,btn_testar], alignment='center'), btn_decr]))
+
+    page.add(Stack([geral, progresso],
+            width=550,
+            height=550
+        ))
 
 flet.app(name='Criar arquivo de conexão', target=main)
