@@ -141,8 +141,8 @@ def main(page: Page):
                             hint_text='Escolha o sistema.',
                             options=[
                                 dropdown.Option('Questor'),
-                                dropdown.Option('Winthor')
-                            ], width=390)
+                                dropdown.Option('Winthor')]
+                            , width=390)
 
 
 
@@ -198,14 +198,14 @@ def main(page: Page):
     )
 
     progresso = Container(
-                    content=ProgressRing(),
-                    alignment=alignment.center, visible=False, opacity=0.3, bgcolor=colors.WHITE)
+                    content=Column(controls=[ProgressRing(width=50, height=50)], alignment='center'),
+                    alignment=alignment.center, visible=False, opacity=0.5, bgcolor=colors.WHITE)
 
-    geral = Container(content=Column(controls=[txt_server,txt_database,txt_username,txt_password,drop_sistema, Row([btn_criar,btn_testar], alignment='center'), btn_decr]))
+    geral = Container(content=Column(controls=[txt_server,txt_database,txt_username,txt_password,drop_sistema, Row([btn_criar,btn_testar], alignment='center'), btn_decr], horizontal_alignment='center'))
 
     page.add(Stack([geral, progresso],
-            width=550,
-            height=550
+            width=500,
+            height=500
         ))
 
 flet.app(name='Criar arquivo de conexão', target=main)
